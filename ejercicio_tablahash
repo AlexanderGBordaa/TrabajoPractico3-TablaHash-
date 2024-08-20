@@ -1,0 +1,85 @@
+class Pokemon:
+    def __init__(self, numero, nombre, tipos, nivel):
+        self.numero = numero
+        self.nombre = nombre
+        self.tipos = tipos
+        self.nivel = nivel
+
+    def __repr__(self):
+        return f"{self.nombre} (#{self.numero}, Nivel {self.nivel}, Tipos: {', '.join(self.tipos)})"
+
+
+class TablaHash:
+    def __init__(self):
+        self.tabla_tipo = {}
+        self.tabla_numero = {i: [] for i in range(10)}
+        self.tabla_nivel = {i: [] for i in range(10)}
+
+    def cargar_pokemon(self, pokemon):
+        # Cargar en la tabla hash por tipo de Pokémon
+        for tipo in pokemon.tipos:
+            if tipo not in self.tabla_tipo:
+                self.tabla_tipo[tipo] = []
+            self.tabla_tipo[tipo].append(pokemon)
+
+        # Cargar en la tabla hash por último dígito del número
+        ultimo_digito = pokemon.numero % 10
+        self.tabla_numero[ultimo_digito].append(pokemon)
+
+        # Cargar en la tabla hash por nivel (dividiendo por 10)
+        nivel_index = pokemon.nivel % 10
+        self.tabla_nivel[nivel_index].append(pokemon)
+
+    def mostrar_por_numero(self, digitos):
+        print(f"Pokémons cuyos números terminan en {digitos}:")
+        for digito in digitos:
+            if digito in self.tabla_numero:
+                for pokemon in self.tabla_numero[digito]:
+                    print(pokemon)
+        print()
+
+    def mostrar_por_nivel(self, divisores):
+        print(f"Pokémons con niveles múltiplos de {divisores}:")
+        for divisor in divisores:
+            for i in range(0, 100, divisor):
+                nivel_index = i % 10
+                if nivel_index in self.tabla_nivel:
+                    for pokemon in self.tabla_nivel[nivel_index]:
+                        if pokemon.nivel % divisor == 0:
+                            print(pokemon)
+        print()
+
+    def mostrar_por_tipo(self, tipos):
+        print(f"Pokémons de los tipos {', '.join(tipos)}:")
+        for tipo in tipos:
+            if tipo in self.tabla_tipo:
+                for pokemon in self.tabla_tipo[tipo]:
+                    print(pokemon)
+        print()
+
+tabla_hash = TablaHash()
+
+pokemons = [
+    Pokemon(123, "Scyther", ["Bicho", "Volador"], 42),
+    Pokemon(279, "Pelipper", ["Agua", "Volador"], 30),
+    Pokemon(150, "Mewtwo", ["Psíquico"], 100),
+    Pokemon(635, "Hydreigon", ["Siniestro", "Dragón"], 70),
+    Pokemon(6, "Charizard", ["Fuego", "Volador"], 36),
+    Pokemon(100, "Voltorb", ["Eléctrico"], 12),
+    Pokemon(25, "Pikachu", ["Eléctrico"], 22),
+    Pokemon(131, "Lapras", ["Agua", "Hielo"], 50),
+    Pokemon(479, "Rotom", ["Eléctrico", "Fantasma"], 20),
+]
+
+# Cargar los Pokémons en las tablas hash
+for pokemon in pokemons:
+    tabla_hash.cargar_pokemon(pokemon)
+
+# Mostrar los Pokémons cuyos números terminan en 3, 7, y 9
+tabla_hash.mostrar_por_numero([3, 7, 9])
+
+# Mostrar los Pokémons cuyos niveles son múltiplos de 2, 5 y 10
+tabla_hash.mostrar_por_nivel([2, 5, 10])
+
+# Mostrar los Pokémons de los tipos Acero, Fuego, Eléctrico, Hielo
+tabla_hash.mostrar_por_tipo(["Acero", "Fuego", "Eléctrico", "Hielo"])
